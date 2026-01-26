@@ -2,8 +2,8 @@
 /* Navbar Styles */
 
 .light-theme{
-  --root_background: white,  
-  --body_background: white,
+  --root_background: #1f1f1f;
+  --body_background: white;
   --navbar_background: white;
   --navbar_text : black;
   /* --body_color : rgb(47, 45, 45); */
@@ -23,7 +23,7 @@
   --hr_line_card: black
 }
 .dark-theme{
-  --root_background: #1f1f1f;
+  --root_background: white;
   --body_background: #1f1f1f;
   --navbar_background: black;
   --navbar_text : white;
@@ -46,7 +46,7 @@
 
 #root {
   max-width: 100%;
-  /* max-height: 100%; */
+  max-height: 100%;
   margin: 0 auto;
   background-color: var(--root_background) !important;
 }  
@@ -63,6 +63,7 @@
   cursor: pointer;
   font-size: 1.5rem;
   color: inherit;
+  border-radius: 50%;
 }
 
 .cart {
@@ -178,6 +179,7 @@ a {
   height:  13rem;
   border-radius: 5%;
   background-color: var(--card-bg-clr) !important;
+  
  
 }
 .card h5,h3,i{
