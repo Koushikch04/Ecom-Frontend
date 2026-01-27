@@ -14,25 +14,26 @@ const UpdateProduct = () => {
     price: "",
     category: "",
     releaseDate: "",
-    productAvailable: false,
-    stockQuantity: "",
+    available: false,
+    quantity: "",
   });
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8080/api/product/${id}`
-        );
+        const response = await axios.get(`http://localhost:8080/product/${id}`);
 
         setProduct(response.data);
-      
+
         const responseImage = await axios.get(
-          `http://localhost:8080/api/product/${id}/image`,
-          { responseType: "blob" }
+          `http://localhost:8080/product/${id}/image`,
+          { responseType: "blob" },
         );
-       const imageFile = await converUrlToFile(responseImage.data,response.data.imageName)
-        setImage(imageFile);     
+        const imageFile = await converUrlToFile(
+          responseImage.data,
+          response.data.imageName,
+        );
+        setImage(imageFile);
         setUpdateProduct(response.data);
       } catch (error) {
         console.error("Error fetching product:", error);
@@ -46,43 +47,42 @@ const UpdateProduct = () => {
     console.log("image Updated", image);
   }, [image]);
 
-
-
-  const converUrlToFile = async(blobData, fileName) => {
+  const converUrlToFile = async (blobData, fileName) => {
     const file = new File([blobData], fileName, { type: blobData.type });
     return file;
-  }
- 
-  const handleSubmit = async(e) => {
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("images", image)
-    console.log("productsdfsfsf", updateProduct)
+    console.log("images", image);
+    console.log("productsdfsfsf", updateProduct);
     const updatedProduct = new FormData();
     updatedProduct.append("imageFile", image);
     updatedProduct.append(
       "product",
-      new Blob([JSON.stringify(updateProduct)], { type: "application/json" })
+      new Blob([JSON.stringify(updateProduct)], { type: "application/json" }),
     );
-  
 
-  console.log("formData : ", updatedProduct)
+    console.log("formData : ", updatedProduct);
+    const cleanedProduct = Object.fromEntries(
+      Object.entries(updatedProduct).filter(([_, v]) => v !== "" && v !== null),
+    );
     axios
-      .put(`http://localhost:8080/api/product/${id}`, updatedProduct, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      .put(`http://localhost:8080/product/${id}`, cleanedProduct, {
+        // headers: {
+        //   "Content-Type": "multipart/form-data",
+        // },
       })
       .then((response) => {
-        console.log("Product updated successfully:", updatedProduct);
+        console.log("Product updated successfully:", cleanedProduct);
         alert("Product updated successfully!");
       })
       .catch((error) => {
         console.error("Error updating product:", error);
-        console.log("product unsuccessfull update",updateProduct)
+        console.log("product unsuccessfull update", cleanedProduct);
         alert("Failed to update product. Please try again.");
       });
   };
- 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -91,15 +91,14 @@ const UpdateProduct = () => {
       [name]: value,
     });
   };
-  
+
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
   };
-  
 
   return (
-    <div className="update-product-container" >
-      <div className="center-container"style={{marginTop:"7rem"}}>
+    <div className="update-product-container">
+      <div className="center-container" style={{ marginTop: "7rem" }}>
         <h1>Update Product</h1>
         <form className="row g-3 pt-1" onSubmit={handleSubmit}>
           <div className="col-md-6">
@@ -186,10 +185,10 @@ const UpdateProduct = () => {
               type="number"
               className="form-control"
               onChange={handleChange}
-              placeholder={product.stockQuantity}
-              value={updateProduct.stockQuantity}
-              name="stockQuantity"
-              id="stockQuantity"
+              placeholder={product.quantity}
+              value={updateProduct.quantity}
+              name="quantity"
+              id="quantity"
             />
           </div>
           <div className="col-md-8">
@@ -221,11 +220,14 @@ const UpdateProduct = () => {
               <input
                 className="form-check-input"
                 type="checkbox"
-                name="productAvailable"
+                name="available"
                 id="gridCheck"
-                checked={updateProduct.productAvailable}
+                checked={updateProduct.available}
                 onChange={(e) =>
-                  setUpdateProduct({ ...updateProduct, productAvailable: e.target.checked })
+                  setUpdateProduct({
+                    ...updateProduct,
+                    available: e.target.checked,
+                  })
                 }
               />
               <label className="form-check-label">Product Available</label>
