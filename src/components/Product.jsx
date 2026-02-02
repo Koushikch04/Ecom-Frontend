@@ -3,34 +3,27 @@ import { useContext, useEffect } from "react";
 import { useState } from "react";
 import AppContext from "../Context/Context";
 import axios from "../axios";
-import UpdateProduct from "./UpdateProduct";
+import unplugged from "../assets/unplugged.png";
+
 const Product = () => {
   const { id } = useParams();
   const { data, addToCart, removeFromCart, cart, refreshData } =
     useContext(AppContext);
   const [product, setProduct] = useState(null);
-  const [imageUrl, setImageUrl] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/product/${id}`);
+        const response = await axios.get(
+          `http://localhost:8080/product/${id}?includeImage=true`,
+        );
+        console.log("Data is :", response.data.imageData);
         setProduct(response.data);
-        if (response.data.imageName) {
-          fetchImage();
-        }
+        console.log("Fetched product:", response.data);
       } catch (error) {
         console.error("Error fetching product:", error);
       }
-    };
-
-    const fetchImage = async () => {
-      const response = await axios.get(
-        `http://localhost:8080/product/${id}/image`,
-        { responseType: "blob" },
-      );
-      setImageUrl(URL.createObjectURL(response.data));
     };
 
     fetchProduct();
@@ -69,7 +62,11 @@ const Product = () => {
       <div className="containers" style={{ display: "flex" }}>
         <img
           className="left-column-img"
-          src={imageUrl}
+          src={
+            product.imageData
+              ? `data:${product.imageType};base64,${product.imageData}`
+              : unplugged
+          }
           alt={product.imageName}
           style={{ width: "50%", height: "auto" }}
         />

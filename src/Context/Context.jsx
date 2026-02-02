@@ -47,7 +47,7 @@ export const AppProvider = ({ children }) => {
 
   const refreshData = async () => {
     try {
-      const response = await axios.get("/products");
+      const response = await axios.get("/products?includeImage=true");
       setData(response.data);
     } catch (error) {
       setIsError(error.message);

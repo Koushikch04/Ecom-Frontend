@@ -22,8 +22,11 @@ const Navbar = ({ onSelectCategory, onSearch }) => {
 
   const fetchData = async (value) => {
     try {
-      const response = await axios.get("http://localhost:8080/products");
+      const response = await axios.get(
+        "http://localhost:8080/products?includeImage=true",
+      );
       setSearchResults(response.data);
+      console.log("Response data:");
       console.log(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
